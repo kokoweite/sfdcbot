@@ -1,3 +1,5 @@
+**Purpose of this project was to discover javascript language, electron and phantomjs.** 
+
 # Salesforce bot for states and countries
 
 **A simple way to fill automatically countries and states on salesforce platform**
