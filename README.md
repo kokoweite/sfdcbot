@@ -1,4 +1,4 @@
-**Purpose of this project was to discover javascript language, electron and phantomjs.** 
+**Purpose of this project was to discover javascript language, electron and phantomjs.**
 
 # Salesforce bot for states and countries
 
@@ -7,6 +7,8 @@
 This tool provides a simple way to fill automatically states and countries you want to add from a source organization to target organization.
 
 ## How to Use
+
+You can download executable [here](https://sfdcbot.herokuapp.com)
 
 To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
 
