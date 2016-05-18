@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Countries and States bot</title>
+  <!-- Latest css -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+  <link rel="stylesheet" href="../assets/css/custom.css">
+  <link rel="stylesheet" href="../assets/css/target.css">
+  <!-- Import jquery-->
+  <script>
+    window.$ = window.jQuery = require("jquery")
+  </script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="top-bar">
+    <div class="close-button">
+      <button type="button" id="close-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
+      </button>
+    </div>
+    <div class="min-button">
+      <button type="button" id="min-max-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-stop"></span>
+      </button>
+    </div>
+    <div class="min-button">
+      <button type="button" id="minimize-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-minus"></span>
+      </button>
+    </div>
+  </div>
+  <div class="container">
+    <div class="page-header" id="header-title">
+      Target sandbox
+    </div>
+    <div class="alert alert-danger" id="error-alert" role="alert" style="display:none"></div>
+    <form class="form-signin">
+      <h4 class="form-signin-heading">Target sandbox</h4>
+      <input type="email" id="inputLogin" class="form-control" placeholder="Login" required autofocus>
+      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="cb-production" value="production" data-toggle="tooltip" data-placement="right" title="Indicates whether addition/edition should be done on production environment or not"> Production
+        </label>
+      </div>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="cb-check-only" value="checkOnly" data-toggle="tooltip" data-placement="right" title="Indicates whether additon/edition should be simulated or not. if checked nothing will be added/edited"> Check Only
+        </label>
+      </div>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="cb-trace" value="trace" data-toggle="tooltip" data-placement="right" title="Indicates whether screenshot should be takes for each steps or not"> Take screenshot
+        </label>
+      </div>
+      <div style="display: none" id="alert-info" class="alert alert-warning" role="alert"></div>
+      <label for="nb-processes" style="margin-top:10px">Number of bots</label>
+      <input type="text" class="form-control" id="nb-processes" placeholder="Number of process" value="5" data-toggle="tooltip" data-placement="right" title="Number of countries/states added/edited at the same time. Amount should never be greater than 15">
+      <label for="nb-processes" style="margin-top:10px">Step retries</label>
+      <input type="text" class="form-control" id="step-retries" placeholder="Number of retries" value="10" data-toggle="tooltip" data-placement="right" title="Number of times a step can be played before fail and restart from zero">
+      <label for="nb-processes" style="margin-top:10px">Retries</label>
+      <input type="text" class="form-control" id="nb-retries" placeholder="Number of retries" value="3" data-toggle="tooltip" data-placement="right" title="Number of times an action of addition/edition can be tried before failing">
+      <label for="nb-processes" style="margin-top:10px">Step duration</label>
+      <input type="text" class="form-control" id="step-duration" placeholder="Step duration" value="3" data-toggle="tooltip" data-placement="right" title="Time in second for a step">
+      <!-- /input-group -->
+  </div>
+  </form>
+  </div>
+  <div class="custom-footer">
+    <button id="back" type="button" class="btn btn-default footer-btn footer-btn-left" style="float:left">&#10157;</button>
+    <button id="next" type="button" class="btn btn-default footer-btn" style="float:right">&#10157;</button>
+  </div>
+  <script>
+    const ipcRenderer = require('electron').ipcRenderer
+    require('electron-window').parseArgs()
+    var fs = require('fs')
+
+    $(document).ready(function() {
+      $(function() {
+        $('[data-toggle="popover"]').popover()
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+      if (typeof window.__args__.error !== 'undefined' && window.__args__.error !== null) {
+        $('#error-alert').show()
+        $('#error-alert').append(window.__args__.error)
+      } else {
+        $('#error-alert').hide()
+      }
+    })
+
+    $('#nb-processes').hover(function() {}, function() {
+      var alertInfoElt = $('#alert-info');
+        if ($(this).val() > 15) {
+          alertInfoElt.attr('class', 'alert alert-warning'),
+            alertInfoElt.text('/!\\ The maximum number of processes should not exceeded 15.')
+            if (alertInfoElt.is(":visible") === false) {
+              alertInfoElt.show()
+            }
+        } else if ($(this).val() <= 15 && alertInfoElt.is(":visible") === true){
+            alertInfoElt.hide()
+        }
+    })
+
+    $('#info').click(function() {
+      $('[data-toggle="popover"]').popover()
+    })
+
+    $('#back').click(function() {
+      if (!$(this).is(':disabled')) {
+        ipcRenderer.send('on-back-to-edit', {})
+        $(this).prop("disabled", true)
+        $('#next').prop("disabled", true)
+      }
+    })
+
+    $('#next').click(function() {
+      if (!$(this).is(':disabled')) {
+        ipcRenderer.send('on-tgt-connection', JSON.stringify({
+          state: window.__args__.state,
+          login: $('#inputLogin').val(),
+          pwd: $('#inputPassword').val(),
+          orgType: $('#cb-production').prop('checked') ? 'production' : undefined,
+          checkOnly: $('#cb-check-only').prop('checked') ? 'checkOnly' : undefined,
+          nbProcesses: $('#nb-processes').val(),
+          trace: $('#cb-trace').prop('checked') ? 'trace' : undefined,
+          retries: $('#nb-retries').val(),
+          duration: $('#step-duration').val(),
+          stepRetries: $('#step-retries').val()
+        }))
+        $(this).prop("disabled", true)
+        $('#back').prop("disabled", true)
+      }
+    })
+  </script>
+  <script src='../js/evtIcons.js'></script>
+</body>
+
+</html>

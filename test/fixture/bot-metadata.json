@@ -1,0 +1,106 @@
+[{
+	"text": "Andorra",
+	"integrationValue": "Andorra",
+	"isoCode": "AD",
+	"orgDefault": "false",
+	"standard": "true",
+	"active": "true",
+	"visible": "true",
+	"typeNode": "country",
+	"selectable": true,
+	"state": {
+		"checked": true,
+		"disabled": false,
+		"expanded": false,
+		"selected": false
+	},
+	"nodeId": 0
+}, {
+	"text": "United Arab Emirates",
+	"integrationValue": "United Arab Emirates",
+	"isoCode": "AE",
+	"orgDefault": "false",
+	"standard": "true",
+	"active": "true",
+	"visible": "true",
+	"typeNode": "country",
+	"selectable": true,
+	"state": {
+		"checked": true,
+		"disabled": false,
+		"expanded": false,
+		"selected": false
+	},
+	"nodeId": 1
+}, {
+	"text": "Afghanistan",
+	"integrationValue": "Afghanistan",
+	"isoCode": "AF",
+	"orgDefault": "false",
+	"standard": "true",
+	"active": "true",
+	"visible": "true",
+	"typeNode": "country",
+	"selectable": true,
+	"state": {
+		"checked": true,
+		"disabled": false,
+		"expanded": false,
+		"selected": false
+	},
+	"nodeId": 2
+}, {
+	"text": "Buenos Aires",
+	"integrationValue": "Buenos Aires",
+	"isoCode": "AR01",
+	"standard": "false",
+	"active": "true",
+	"visible": "true",
+	"typeNode": "state",
+	"parentIsoCode": "AR",
+	"selectable": true,
+	"state": {
+		"checked": true,
+		"disabled": false,
+		"expanded": false,
+		"selected": false
+	},
+	"nodeId": 11,
+	"parentId": 10
+}, {
+	"text": "Ciudad Autonoma de Buenos Aires",
+	"integrationValue": "Ciudad Autonoma de Buenos Aires",
+	"isoCode": "AR02",
+	"standard": "false",
+	"active": "true",
+	"visible": "true",
+	"typeNode": "state",
+	"parentIsoCode": "AR",
+	"selectable": true,
+	"state": {
+		"checked": true,
+		"disabled": false,
+		"expanded": false,
+		"selected": false
+	},
+	"nodeId": 12,
+	"parentId": 10
+}, {
+	"text": "Catamarca",
+	"integrationValue": "Catamarca",
+	"isoCode": "AR03",
+	"standard": "false",
+	"active": "true",
+	"visible": "true",
+	"typeNode": "state",
+	"parentIsoCode": "AR",
+	"selectable": true,
+	"state": {
+		"checked": true,
+		"disabled": false,
+		"expanded": false,
+		"selected": false
+	},
+	"nodeId": 13,
+	"parentId": 10
+}]

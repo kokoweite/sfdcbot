@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Countries and States bot</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+  <link rel="stylesheet" href="../assets/css/custom.css">
+  <script>
+    window.$ = window.jQuery = require("jquery")
+  </script>
+</head>
+
+<body>
+  <div class="top-bar">
+    <div class="close-button">
+      <button type="button" id="close-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
+      </button>
+    </div>
+    <div class="min-button">
+      <button type="button" id="min-max-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-stop"></span>
+      </button>
+    </div>
+    <div class="min-button">
+      <button type="button" id="minimize-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-minus"></span>
+      </button>
+    </div>
+  </div>
+  <div class="container">
+    <div class="page-header" id="header-title">
+      Source sandbox
+    </div>
+    <div class="alert alert-danger" id="error-alert" role="alert" style="display:none"></div>
+    <form class="form-signin">
+      <h4 class="form-signin-heading">Source sandbox</h4>
+      <input type="email" id="inputLogin" class="form-control" placeholder="Login" required autofocus>
+      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="cb-production" value="production"> Production
+        </label>
+      </div>
+    </form>
+  </div>
+  <footer>
+    <button id="back" type="button" class="btn btn-default footer-btn footer-btn-left" style="float:left">&#10157;</button>
+    <button id="next" type="button" class="btn btn-default footer-btn" style="float:right">&#10157;</button>
+  </footer>
+  <script>
+    const ipcRenderer = require('electron').ipcRenderer
+    require('electron-window').parseArgs()
+
+    $(document).ready(function() {
+      if (typeof window.__args__.error !== 'undefined' && window.__args__.error !== null) {
+        $('#error-alert').show()
+        $('#error-alert').text(window.__args__.error)
+      } else {
+        $('#error-alert').hide()
+      }
+    })
+
+    $('#back').click(function() {
+      if (!$(this).is(':disabled')) {
+        ipcRenderer.send('on-src-back', JSON.stringify({
+          state: window.__args__.state
+        }))
+        $(this).prop("disabled", true)
+        $('#next').prop("disabled", true)
+      }
+    })
+
+    $('#next').click(function() {
+      if (!$(this).is(':disabled')) {
+        ipcRenderer.send('on-src-next', JSON.stringify({
+          state: window.__args__.state,
+          login: $('#inputLogin').val(),
+          pwd: $('#inputPassword').val(),
+          orgType: $('#cb-production').prop('checked') ? 'production' : undefined
+        }))
+        $(this).prop("disabled", true)
+        $('#back').prop("disabled", true)
+      }
+    })
+  </script>
+  <script src='../js/evtIcons.js'></script>
+</body>
+
+</html>

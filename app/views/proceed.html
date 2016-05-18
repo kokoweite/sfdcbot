@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Fill Countries and States</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+  <link rel="stylesheet" href="../assets/css/custom.css">
+  <link rel="stylesheet" href="../assets/css/proceed.css">
+  <!-- Required Javascript -->
+  <script>
+    window.$ = window.jQuery = require('jquery');
+  </script>
+</head>
+
+<body>
+  <div class="top-bar">
+    <div class="close-button">
+      <button type="button" id="close-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
+      </button>
+    </div>
+    <div class="min-button">
+      <button type="button" id="min-max-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-stop"></span>
+      </button>
+    </div>
+    <div class="min-button">
+      <button type="button" id="minimize-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-minus"></span>
+      </button>
+    </div>
+  </div>
+  <div class="container">
+    <div class="page-header" id="header-title">
+      Filling States and countries
+    </div>
+    <div id="waiting">
+      Waiting for processes<span id="dots"></span>
+    </div>
+    <div class="processes-container">
+      <div id="process">
+      </div>
+    </div>
+    <div class="text-center">
+      <button id="shutdown-button" type="button" class="btn btn-danger">Cancell All</button>
+      <button id="quit" type="button" class="btn btn-default" style="display:none">Quit</button>
+    </div>
+  </div>
+  <!-- End Content -->
+  <script>
+    const ipcRenderer = require('electron').ipcRenderer
+    require('electron-window').parseArgs()
+
+    var dots = 0
+
+    $(document).ready(function() {
+      setInterval(function() {
+        if (dots < 3) {
+          $('#dots').append('.')
+          dots++
+        } else {
+          $('#dots').html('')
+          dots = 0
+        }
+      }, 600)
+    })
+
+    function htmlSnippet(pid, childPid, label, typeNode) {
+      var html = []
+      html.push('<div id="panel-container_' + childPid + '" class="panel panel-info" style="margin-bottom:40px">')
+      html.push('<div id="panel-heading_' + childPid + '"class="panel-heading clearfix">')
+      html.push('<b>' + label + '</b>' + ' ' + typeNode)
+      html.push('<div class="btn-group pull-right">')
+      html.push('<button id="cancel-button_' + pid + '_' + childPid + '" type="button" class="btn btn-danger">')
+      html.push('&times')
+      html.push('</button>')
+      html.push('</div>')
+      html.push('</div>')
+      html.push('<div class="progress">')
+      html.push('<div id="loading_' + childPid + '" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">')
+      html.push('</div>')
+      html.push('</div>')
+      html.push('<div class="info-panel" id="info-panel_' + childPid + '">')
+      html.push('Waiting...')
+      html.push('</div>')
+      html.push('</div>')
+      $('#process').append(html.join(''))
+    }
+
+    function cancel(element) {
+      if (!element.is(':disabled')) {
+        element.prop("disabled", true)
+        var infos = element.attr('id').split('_')
+        if (infos.length === 3) {
+          $('#panel_' + infos[2]).attr('class', 'panel panel-warning')
+          $('#loading_' + infos[2]).attr('class', 'progress-bar progress-bar-warning')
+          $('#loading_' + infos[2]).text('canceled')
+          element.attr('class', 'btn btn-danger disabled')
+          return infos
+        }
+      }
+      return undefined
+    }
+
+    ipcRenderer.on('on-data', function(event, args) {
+      var info = JSON.parse(args)
+      if ($('#waiting').is(":visible"))
+        $('#waiting').attr('style', 'display:none')
+      if ($('#panel-container_' + info.childPid).length === 0) {
+        htmlSnippet(info.pid, info.childPid, info.label, info.typeNode)
+      } else {
+        if (info.info !== undefined){
+          $('#info-panel_' + info.childPid).text(info.info)
+          if (info.percent !== undefined) {
+            $('#loading_' + info.childPid).attr('aria-valuenow', info.percent)
+            $('#loading_' + info.childPid).attr('style', "width:" + info.percent + "%")
+            $('#loading_' + info.childPid).text(info.percent + '%')
+            if (info.percent >= 100) {
+              $('#cancel-button_' + info.pid + '_' + info.childPid).prop("disabled", true)
+              $('#loading_' + info.childPid).attr('class', 'progress-bar progress-bar-success progress-bar-striped')
+            }
+          }
+          if(info.fail === true){
+            if(!$('#cancel-button_' + info.pid + '_' + info.childPid).is(':disabled')){
+              $('#cancel-button_' + info.pid + '_' + info.childPid).prop("disabled", true)
+              $('#cancel-button_' + info.pid + '_' + info.childPid).attr('class', 'btn btn-danger disabled')
+            }
+            $('#panel-container_' + info.childPid).attr('class', 'panel panel-danger')
+          }
+        }
+      }
+    })
+
+    $('#shutdown-button').click(function() {
+      if (!$(this).is(':disabled')) {
+        $(this).prop("disabled", true)
+        $('[id^=cancel]').each(function() {
+          cancel($(this))
+        })
+        ipcRenderer.send('on-cancel-all', {})
+        $(this).attr('class', 'btn btn-danger disabled')
+      }
+    })
+
+    $(document).on('click', "[id^=cancel]", function() {
+      if (!$(this).is(':disabled')) {
+        var infos = cancel($(this))
+        if (infos != undefined)
+          ipcRenderer.send('on-cancel', JSON.stringify({
+            pid: infos[1],
+            childPid: infos[2]
+          }))
+      }
+    })
+  </script>
+  <script src="../js/evtIcons.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+html {
+  height: 100%;
+}
+
+body {
+  overflow: auto;
+  height: 70%;
+}
+
+#edit-countries,
+#edit-states,
+#add-countries,
+#add-states,
+{
+  margin: 30px;
+}
+
+.container {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+}
+
+.custom-footer {
+  height: 55px;
+  margin: 50px;
+  position: relative;
+}

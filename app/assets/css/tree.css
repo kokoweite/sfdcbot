@@ -1,0 +1,17 @@
+.tree-container {
+  height: 500px;
+  margin: 0 auto;
+}
+
+.container {
+  height: 100%;
+}
+
+#tree {
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.text-center {
+  margin-top: 20px;
+}

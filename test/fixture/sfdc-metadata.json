@@ -1,0 +1,60 @@
+{
+  "fullName": "Address",
+  "countriesAndStates": {
+    "countries": [
+      {
+        "active": "true",
+        "integrationValue": "Andorra",
+        "isoCode": "AD",
+        "label": "Andorra",
+        "orgDefault": "false",
+        "standard": "true",
+        "visible": "true"
+      },
+      {
+        "active": "true",
+        "integrationValue": "United Arab Emirates",
+        "isoCode": "AE",
+        "label": "United Arab Emirates",
+        "orgDefault": "false",
+        "standard": "true",
+        "visible": "true"
+      },
+      {
+        "active": "true",
+        "integrationValue": "Argentina",
+        "isoCode": "AR",
+        "label": "Argentina",
+        "orgDefault": "false",
+        "standard": "true",
+        "states": [
+          {
+            "active": "true",
+            "integrationValue": "Buenos Aires",
+            "isoCode": "AR01",
+            "label": "Buenos Aires",
+            "standard": "false",
+            "visible": "true"
+          },
+          {
+            "active": "true",
+            "integrationValue": "Ciudad Autonoma de Buenos Aires",
+            "isoCode": "AR02",
+            "label": "Ciudad Autonoma de Buenos Aires",
+            "standard": "false",
+            "visible": "true"
+          },
+          {
+            "active": "true",
+            "integrationValue": "Catamarca",
+            "isoCode": "AR03",
+            "label": "Catamarca",
+            "standard": "false",
+            "visible": "true"
+          }
+        ],
+        "visible": "true"
+      }
+    ]
+  }
+}

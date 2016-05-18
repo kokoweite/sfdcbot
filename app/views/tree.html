@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Countries and States automation</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+  <link rel="stylesheet" href="../assets/css/custom.css">
+  <link rel="stylesheet" href="../assets/css/tree.css">
+  <!-- Required Javascript -->
+  <script>
+    window.$ = window.jQuery = require("jquery")
+  </script>
+</head>
+
+<body>
+  <div class="top-bar">
+    <div class="close-button">
+      <button type="button" id="close-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
+      </button>
+    </div>
+    <div class="min-button">
+      <button type="button" id="min-max-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-stop"></span>
+      </button>
+    </div>
+    <div class="min-button">
+      <button type="button" id="minimize-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-minus"></span>
+      </button>
+    </div>
+  </div>
+  <div class="container">
+    <div class="page-header" id="header-title">
+    </div>
+    <div class="tree-container">
+      <div id="tree"></div>
+    </div>
+  </div>
+  <footer>
+    <button id="back" type="button" class="btn btn-default footer-btn footer-btn-left" style="float:left">&#10157;</button>
+    <button id="next" type="button" class="btn btn-default footer-btn" style="float:right">&#10157;</button>
+  </footer>
+  <script src='../js/vendors/bootstrap-treeview.js'></script>
+  <script type='text/javascript'>
+    const ipcRenderer = require('electron').ipcRenderer
+    require('electron-window').parseArgs()
+
+    $(document).ready(function() {
+
+      //Create tree from dataTree table
+      var $checkableTree = $('#tree').treeview({
+        data: window.__args__.data,
+        showIcon: false,
+        showCheckbox: true
+      })
+
+      $checkableTree.on('nodeChecked', function(ev, node) {
+        if (node.state.expanded === true) {
+          if (typeof node.nodes !== 'undefined') {
+            // Get tree instance
+            var tree = $(this).treeview(true)
+            node.nodes.forEach(function(node) {
+              tree.checkNode(node.nodeId)
+            })
+          }
+        }
+      }).on('nodeUnchecked', function(ev, node) {
+        if (node.state.expanded === true) {
+          if (typeof node.nodes !== 'undefined') {
+            // Get tree instance
+            var tree = $(this).treeview(true)
+            node.nodes.forEach(function(node) {
+              tree.uncheckNode(node.nodeId)
+            })
+          }
+        }
+      })
+
+      if (window.__args__.state === 'edit') {
+        $('#header-title').text('Countries and States to edit')
+
+        var tree = $('#tree').data('treeview')
+
+        // Disable countries selected on add selection page
+        if (typeof window.__args__.disableNodes !== 'undefined') {
+          // Get tree instance
+          tree.disableNode(window.__args__.disableNodes)
+        }
+      } else {
+        $('#header-title').text('Countries and States to add')
+      }
+
+
+      $('#next').click(function() {
+        if (!$(this).is(':disabled')) {
+          // Get all checked nodes
+          var checkedNodes = $('#tree').data('treeview').getChecked()
+            // Depending on which state is the app, send on-add or on-edit
+          var evt = (window.__args__.state === 'add') ? 'on-add-finished' : 'on-edit-finished'
+          ipcRenderer.send(evt, JSON.stringify({
+            checkedNodes: checkedNodes
+          }))
+          $(this).prop("disabled", true)
+          $('#back').prop("disabled", true)
+        }
+      })
+
+
+      $('#back').click(function() {
+
+        if (!$(this).is(':disabled')) {
+          // Depending on which state is the app, send on-add or on-edit
+          var evt = (window.__args__.state === 'add') ? 'on-back-to-source' : 'on-back-to-add'
+          ipcRenderer.send(evt, {})
+          $(this).prop("disabled", true)
+          $('#next').prop("disabled", true)
+        }
+      })
+    })
+  </script>
+  <script src='../js/evtIcons.js'></script>
+</body>
+
+</html>

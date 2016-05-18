@@ -1,0 +1,8 @@
+node_modules
+.DS_Store
+debug
+out
+secret.properties
+/coverage
+/bot-darwin-x64
+phantomBotLightning.js

@@ -1,0 +1,56 @@
+.btn-header {
+  float: right;
+}
+
+.container {
+  height: 100%;
+}
+
+.progress {
+  margin: 0px;
+}
+
+.processes-container {
+  height: 500px;
+}
+
+#process {
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.progress-bar {
+  margin: 0px;
+}
+
+.panel-footer {
+  padding: 4px;
+}
+
+#quit,
+#waiting,
+#dots {
+  font-family: dk_prince_frogregular;
+  font-size: 30px;
+}
+
+#waiting {
+  width: 300px;
+  margin: 0 auto;
+}
+
+#quit:hover {
+  font-weight: bold;
+  background-color: #FFF;
+}
+
+.info-panel {
+  width: 100%;
+  padding: 10px 15px 10px 10px;
+  height: 35px;
+  text-align: center;
+}
+
+.text-center {
+  padding-top: 25px;
+}

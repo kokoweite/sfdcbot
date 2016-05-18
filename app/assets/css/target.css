@@ -1,0 +1,28 @@
+html {
+  height: 100%;
+}
+
+body {
+  overflow: auto;
+  height: 70%;
+}
+
+.sub-container {
+  margin: 0 auto;
+}
+
+.container {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+}
+
+.custom-footer {
+  bottom: 0;
+  height: 100px;
+  padding-left: 20%;
+  padding-right: 20%;
+  padding-bottom: 15%;
+  width: 100%;
+  position: relative;
+}

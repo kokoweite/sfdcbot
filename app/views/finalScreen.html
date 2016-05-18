@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Countries and States automation</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+  <link rel="stylesheet" href="../assets/css/custom.css">
+  <link rel="stylesheet" href="../assets/css/finalscreen.css">
+  <!-- Required Javascript -->
+  <script>
+    window.$ = window.jQuery = require("jquery")
+  </script>
+</head>
+
+<body>
+  <div class="top-bar">
+    <div class="close-button">
+      <button type="button" id="close-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
+      </button>
+    </div>
+    <div class="min-button">
+      <button type="button" id="min-max-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-stop"></span>
+      </button>
+    </div>
+    <div class="min-button">
+      <button type="button" id="minimize-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-minus"></span>
+      </button>
+    </div>
+  </div>
+  <div id="container" class="container">
+    <div class="page-header" id="header-title">
+      Results
+    </div>
+    <div class="row">
+      <div id="add-states" class="col-md-6">
+      </div>
+      <div id="add-countries" class="col-md-6">
+      </div>
+    </div>
+    <div class="row">
+      <div id="edit-states" class="col-md-6">
+      </div>
+      <div id="edit-countries" class="col-md-6">
+      </div>
+    </div>
+    <div class="row">
+      <div id="total-time" class="col-md-12 text-center">
+      </div>
+    </div>
+  </div>
+  <div class="custom-footer">
+    <div class="text-center">
+      <div class="row">
+        <button type="button" class="btn btn-primary" id="print-result">Print results</button>
+      </div>
+      <div class="row" style="margin-top:20px">
+        <button type="button" class="btn btn-primary" id="go-back-index-page">Home</button>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    const ipcRenderer = require('electron').ipcRenderer
+    const dialog = require('electron').remote.dialog
+    const pluralize = require('pluralize')
+    require('electron-window').parseArgs()
+
+    function templating(innerHtml, title) {
+      var template = []
+      template.push('<table class="table">')
+      template.push('<thead>')
+      template.push('<tr>')
+      template.push('<th>' + title + '</th>')
+      template.push('<th> Status </th>')
+      template.push('<th> Information </th>')
+      template.push('</tr>')
+      template.push('<thead>')
+      template.push(innerHtml);
+      template.push('</table>')
+      template.push('</div>')
+      template.push('</div>')
+      return template.join('')
+    }
+
+    function createColumns(label, status, info) {
+      var innerHtml = []
+      var iconHtml = '<span class="glyphicon glyphicon-ok alert-success"></span>'
+      if (status === 'fail') {
+        iconHtml = '<span class="glyphicon glyphicon-remove alert-danger"></span>'
+      } else if (status === 'cancel') {
+        iconHtml = '<span class="glyphicon glyphicon-exclamation-sign alert-warning"></span>'
+      }
+      innerHtml.push('<tr>')
+      innerHtml.push('<td>' + label + '</td>')
+      innerHtml.push('<td>' + iconHtml + '</td>')
+      innerHtml.push('<td>' + info + '</td>')
+      innerHtml.push('</tr>')
+      return innerHtml.join('')
+    }
+
+    function innerHtmlGenerator(infos) {
+      var innerHtmlEditStates = []
+      var innerHtmlEditCountries = []
+      var innerHtmlAddStates = []
+      var innerHtmlAddCountries = []
+      Object.keys(infos).forEach(function(key) {
+        var info = infos[key]
+        if (info.node.typeNode === "country") {
+          if (info.node.action === "add") {
+            innerHtmlAddCountries.push(createColumns(info.node.label, info.node.status, info.info))
+          } else {
+            innerHtmlEditCountries.push(createColumns(info.node.label, info.node.status, info.info))
+          }
+        } else {
+          if (info.node.action === "add") {
+            innerHtmlAddStates.push(createColumns(info.node.label, info.node.status, info.info))
+          } else {
+            innerHtmlEditStates.push(createColumns(info.node.label, info.node.status, info.info))
+          }
+        }
+      })
+
+      if (innerHtmlAddCountries.length > 0)
+        $('#add-countries').append(templating(innerHtmlAddCountries.join(''), 'Add countries'))
+      if (innerHtmlAddStates.length > 0)
+        $('#add-states').append(templating(innerHtmlAddStates.join(''), 'Add states'))
+      if (innerHtmlEditCountries.length > 0)
+        $('#edit-countries').append(templating(innerHtmlEditCountries.join(''), 'Edit countries'))
+      if (innerHtmlEditStates.length > 0)
+        $('#edit-states').append(templating(innerHtmlEditStates.join(''), 'Edit states'))
+
+      $('#total-time').append('<h3> Total time <h3></br>' + window.__args__.minute + pluralize(' minute', window.__args__.minute ) + ' ' + window.__args__.second + pluralize(' second', window.__args__.second))
+    }
+
+    innerHtmlGenerator(window.__args__.nodes)
+
+    $('#print-result').click(function() {
+      var path = dialog.showSaveDialog({
+        properties: ['openFile', 'openDirectory', 'multiSelections']
+      })
+      ipcRenderer.send('on-print-result', {
+        path:path
+      })
+    })
+
+    $('#go-back-index-page').click(function() {
+      ipcRenderer.send('on-finish-back', {})
+    })
+  </script>
+  <script src='../js/evtIcons.js'></script>
+</body>
+
+</html>

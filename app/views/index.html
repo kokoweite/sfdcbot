@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Countries and States bot</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+  <link rel="stylesheet" href="../assets/css/custom.css">
+  <link rel="stylesheet" href="../assets/css/index.css">
+  <script>
+    window.$ = window.jQuery = require("jquery")
+  </script>
+</head>
+
+<body>
+  <div class="top-bar">
+    <div class="close-button">
+      <button type="button" id="close-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
+      </button>
+    </div>
+    <div class="min-button">
+      <button type="button" id="min-max-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-stop"></span>
+      </button>
+    </div>
+    <div class="min-button">
+      <button type="button" id="minimize-window" class="btn btn-default" aria-label="Close">
+        <span aria-hidden="true" class="glyphicon glyphicon-minus"></span>
+      </button>
+    </div>
+  </div>
+  <div class="container">
+    <div class="jumbotron">
+      <p>Salesforce bot</p>
+      <p>for</p>
+      <p>states and countries</p>
+      A simple way to fill countries and states between two sandboxes...
+    </div>
+    <div class="start">
+      <button type="button" id="start-button" class="btn btn-default">START</button>
+    </div>
+  </div>
+
+  <script>
+    const ipcRenderer = require('electron').ipcRenderer
+    const remote = require('electron').remote;
+    const Menu = remote.Menu;
+    const MenuItem = remote.MenuItem;
+
+    $('#start-button').click(function() {
+      ipcRenderer.send('on-start', {})
+    })
+
+    var template = [{
+      label: 'Edit',
+      submenu: [{
+        label: 'Cut',
+        accelerator: 'CmdOrCtrl+X',
+        role: 'cut'
+      }, {
+        label: 'Copy',
+        accelerator: 'CmdOrCtrl+C',
+        role: 'copy'
+      }, {
+        label: 'Paste',
+        accelerator: 'CmdOrCtrl+V',
+        role: 'paste'
+      }, {
+        label: 'Select All',
+        accelerator: 'CmdOrCtrl+A',
+        role: 'selectall'
+      }, ]
+    }, {
+      label: 'View',
+      submenu: [{
+        label: 'Reload',
+        accelerator: 'CmdOrCtrl+R',
+        click: function(item, focusedWindow) {
+          if (focusedWindow)
+            focusedWindow.reload();
+        }
+      }, {
+        label: 'Toggle Full Screen',
+        accelerator: (function() {
+          if (process.platform == 'darwin')
+            return 'Ctrl+Command+F';
+          else
+            return 'F11';
+        })(),
+        click: function(item, focusedWindow) {
+          if (focusedWindow)
+            focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+        }
+      }, ]
+    }, {
+      label: 'Window',
+      role: 'window',
+      submenu: [{
+        label: 'Minimize',
+        accelerator: 'CmdOrCtrl+M',
+        role: 'minimize'
+      }, {
+        label: 'Close',
+        accelerator: 'CmdOrCtrl+W',
+        role: 'close'
+      }]
+    }];
+
+    if (process.platform == 'darwin') {
+      var name = require('electron').remote.app.getName();
+      template.unshift({
+        label: name,
+        submenu: [{
+          label: 'About ' + name,
+          role: 'about'
+        }, {
+          type: 'separator'
+        }, {
+          label: 'Services',
+          role: 'services',
+          submenu: []
+        }, {
+          type: 'separator'
+        }, {
+          label: 'Hide ' + name,
+          accelerator: 'Command+H',
+          role: 'hide'
+        }, {
+          label: 'Hide Others',
+          accelerator: 'Command+Alt+H',
+          role: 'hideothers'
+        }, {
+          label: 'Show All',
+          role: 'unhide'
+        }, {
+          type: 'separator'
+        }, {
+          label: 'Quit',
+          accelerator: 'Command+Q',
+          click: function() {
+            app.quit();
+          }
+        }, ]
+      });
+      // Window menu.
+      template[3].submenu.push({
+        type: 'separator'
+      }, {
+        label: 'Bring All to Front',
+        role: 'front'
+      });
+    }
+
+    var menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu);
+  </script>
+  <script src='../js/evtIcons.js'></script>
+</body>
+
+</html>
