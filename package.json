@@ -1,5 +1,5 @@
 {
-  "name": "sfdc bot",
+  "name": "sfdcbot",
   "version": "1.0.0",
   "description": "Bot for automatically fill countries and states on salesforce platform",
   "main": "main.js",
