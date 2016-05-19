@@ -1,5 +1,5 @@
 {
-  "name": "electron-sfdc-countries-states",
+  "name": "sfdc bot",
   "version": "1.0.0",
   "description": "Bot for automatically fill countries and states on salesforce platform",
   "main": "main.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atom/electron-quick-start.git"
+    "url": "git+https://github.com/kokoweite/sfdcbot.git"
   },
   "keywords": [
     "electron",
@@ -19,9 +19,9 @@
   "author": "kokoweite",
   "license": "DBAD",
   "bugs": {
-    "url": "https://github.com/atom/electron-quick-start/issues"
+    "url": "https://github.com/kokoweite/sfdcbot/issues"
   },
-  "homepage": "https://github.com/atom/electron-quick-start#readme",
+  "homepage": "https://github.com/kokoweite/sfdcbot",
   "devDependencies": {
     "electron-prebuilt": "^0.37.2",
     "properties-reader": "0.0.15",
