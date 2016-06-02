@@ -571,6 +571,8 @@ Core.prototype._launchProcessHelper = function (info, win, pullConsumeCallback, 
 Core.prototype._launchProcess = function (info, win, pullConsumeCallback, finalCallback) {
   this.logger.info('core.js  ###  _launchProcess')
   var self = this
+  var settings = JSON.stringify({login: info.login, pwd: info.pwd, loginUrl: info.loginUrl, checkOnly: info.checkOnly, trace: info.trace, retries: info.retries, duration: info.duration, stepRetries: info.stepRetries, action: info.action})
+  
   // self._logger.info('#Core.prototype._launchProcess launch process  info.onEvent = ' + info.onEvent + ' info.eventToEmit = ' +
     // info.eventToEmit + ' info.pool.length = ' + info.pool.length + '  info.pool = ' + JSON.stringify(info.pool))
 
@@ -590,7 +592,7 @@ Core.prototype._launchProcess = function (info, win, pullConsumeCallback, finalC
           }
           self.logger.info('core.js  ###  _launchProcess : Create temp file ' + tmpInfo.path)
            // Create new child process
-          var child = proc.fork(PATH_LAUNCHBOT_SCRIPT, [JSON.stringify(info), tmpInfo.path, self._debugFolderPath])
+          var child = proc.fork(PATH_LAUNCHBOT_SCRIPT, [settings, tmpInfo.path, self._debugFolderPath])
           self.logger.info('core.js  ###  _launchProcess : Create child process pid = ' + child.pid)
            // Add it to _processes map for further operation
           self._processes[child.pid] = child
